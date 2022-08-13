@@ -1,4 +1,4 @@
-package ExtraMath;
+package CustomMathLib;
 
 public class Point {
     // Members

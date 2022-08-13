@@ -1,4 +1,4 @@
-import ExtraMath.Point;
+import CustomMathLib.Point;
 
 import java.awt.*;
 
@@ -9,13 +9,9 @@ public class Ball {
     private double dy;
     private int rad;
     private double elasticity;
+    private Color color;
 
-    //only read
-    public Color color;
-
-
-
-    //Null Constructors
+    //Constructors
     public Ball() {
         this.x = 0.0;
         this.y = 0.0;
@@ -23,27 +19,51 @@ public class Ball {
         this.color = Color.magenta;
         this.elasticity = 0.5;
     }
-
-    //additional parameters
     public Ball(double x, double y, int rad) {
         this.x = x;
         this.y = y;
         this.rad = rad;
     }
-
     public Ball(double x, double y, int rad, Color color) {
         this.x = x;
         this.y = y;
         this.rad = rad;
         this.color = color;
     }
-
     public Ball(double x, double y, int rad, double elasticity, Color color) {
         this.x = x;
         this.y = y;
         this.rad = rad;
         this.elasticity = elasticity;
         this.color = color;
+    }
+
+    public synchronized void update(String threadName){
+        //apply gravity
+        applyForce(threadName, new Point(0,0.0196));
+
+        //wall bounce
+        if((y + rad)> MainClass.SCREENHEIGHT){ // bottom
+            dx *= 0.95;
+            dy *= -elasticity;
+            translateLocation(threadName, new Point(dx,dy));
+        }
+        if((y - rad < 0)){ // top
+            dx *= 0.95;
+            dy *= -elasticity;
+            translateLocation(threadName, new Point(dx,dy));
+        }
+        if(x + rad > MainClass.SCREENWIDTH){ //left
+            dx *= -elasticity;
+            translateLocation(threadName, new Point(dx,dy));
+        }
+        if((x - rad)< 0){ //right
+            dx *= -elasticity;
+            translateLocation(threadName, new Point(dx,dy));
+        }
+
+        //move ball based on velocity
+        translateLocation(threadName, new Point(dx,dy));
     }
 
 
@@ -63,6 +83,10 @@ public class Ball {
     public synchronized int getRad(){
         if(MainClass.debugThreadCycles)System.out.println(" is reading ball rad - value is: (" + rad + ")");
         return rad;
+    }
+    public synchronized Color getColor(){
+        if(MainClass.debugThreadCycles)System.out.println(" is reading ball color - value is: (" + color + ")");
+        return color;
     }
 
 
